@@ -1,12 +1,12 @@
-﻿using ItrumWebApi.Models;
-using Microsoft.AspNetCore.Identity;
+﻿using IntrumWebApi.Models.Entities;
+using ItrumWebApi.Models;
 
 namespace IntrumWebApi.Services
 {
     public interface IUserService
     {
         Task<AuthenticateResponse> Authenticate(AuthenticateRequest model);
-        IEnumerable<IdentityUser> GetAll();
-        Task<IdentityUser> GetById(string id);
+        IEnumerable<ApplicationUser> GetAll();
+        Task<ApplicationUser> GetById(string id);
     }
 }

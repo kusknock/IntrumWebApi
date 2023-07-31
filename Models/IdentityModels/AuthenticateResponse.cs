@@ -1,6 +1,6 @@
-using Microsoft.AspNetCore.Identity;
+using IntrumWebApi.Models.Entities;
 using ItrumWebApi.Models.IdentityModels;
-using System.Collections.Generic;
+using Microsoft.AspNetCore.Identity;
 
 namespace ItrumWebApi.Models
 {
@@ -8,11 +8,11 @@ namespace ItrumWebApi.Models
     {
         public string Id { get; set; }
         public string? Username { get; set; }
-        public string? Token { get; set; } = null!;  
+        public string? Token { get; set; } = null!;
 
         public IEnumerable<IdentityError>? Errors { get; private set; } = null!;
 
-        public AuthenticateResponse(IdentityUser user, string token)
+        public AuthenticateResponse(ApplicationUser user, string token)
         {
             Id = user.Id;
             Username = user.UserName;

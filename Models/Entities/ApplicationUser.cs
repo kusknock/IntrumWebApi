@@ -1,4 +1,6 @@
-﻿namespace IntrumWebApi.Models.Entities
+﻿using Microsoft.AspNetCore.Identity;
+
+namespace IntrumWebApi.Models.Entities
 {
     public class ApplicationUser : IdentityUser
     {
