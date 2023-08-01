@@ -1,4 +1,5 @@
-﻿using IntrumWebApi.Models.Entities;
+﻿using IntrumWebApi.Models;
+using IntrumWebApi.Models.Entities;
 using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
 using System.IdentityModel.Tokens.Jwt;

@@ -7,7 +7,7 @@ namespace ItrumWebApi.Models.IdentityModels
 {
     public static class IdentityTypeErrors
     {
-        public static readonly string UserNotFound = "404";
-        public static readonly string InvalidUserNameOrPassword = "400";
+        public static readonly string UserNotFound = "User is not found";
+        public static readonly string InvalidUserNameOrPassword = "You entered invalid password or username. Please try again";
     }
 }

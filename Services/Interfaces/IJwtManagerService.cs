@@ -1,4 +1,5 @@
-﻿using IntrumWebApi.Models.Entities;
+﻿using IntrumWebApi.Models;
+using IntrumWebApi.Models.Entities;
 using ItrumWebApi.Models;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -8,7 +9,8 @@ namespace IntrumWebApi.Services
 {
     public interface IJwtManagerRepository
     {
-        JwtSecurityToken CreateToken(List<Claim> authClaims);
-        string GenerateRefreshToken();
+        TokenModel CreatePairOfTokens(IEnumerable<Claim> claims);
+
+        ClaimsPrincipal GetPrincipalFromExpiredToken(string accessToken);
     }
 }

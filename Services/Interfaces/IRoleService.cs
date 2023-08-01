@@ -1,4 +1,5 @@
-﻿using IntrumWebApi.Models.Entities;
+﻿using IntrumWebApi.Models;
+using IntrumWebApi.Models.Entities;
 using System.Security.Claims;
 
 namespace IntrumWebApi.Services.Interfaces

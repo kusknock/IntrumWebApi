@@ -5,6 +5,7 @@ using IntrumWebApi.Models;
 using IntrumWebApi.Services;
 using System.Threading.Tasks;
 using ItrumWebApi.Models;
+using IntrumWebApi.Filters;
 
 namespace IntrumWebApi.Controllers
 {
@@ -13,12 +14,10 @@ namespace IntrumWebApi.Controllers
     public class AccountController : ControllerBase
     {
         private IUserService userService;
-        private IRegisterService registerService;
 
-        public AccountController(IUserService userService, IRegisterService registerService)
+        public AccountController(IUserService userService)
         {
             this.userService = userService;
-            this.registerService = registerService;
         }
 
         [HttpPost("register")]
@@ -28,7 +27,7 @@ namespace IntrumWebApi.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var response = await registerService.Register(model);
+            var response = await userService.Register(model);
 
             if (response.Errors != null)
                 return BadRequest(response.Errors);
@@ -37,13 +36,13 @@ namespace IntrumWebApi.Controllers
         }
 
         [HttpPost("register-admin")]
-        [AllowAnonymous]
+        [LocalOnly]
         public async Task<IActionResult> RegisterAdmin([FromForm] RegistrationRequest model)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var response = await registerService.RegisterAdmin(model);
+            var response = await userService.RegisterAdmin(model);
 
             if (response.Errors != null)
                 return BadRequest(response.Errors);
@@ -64,6 +63,25 @@ namespace IntrumWebApi.Controllers
                 return BadRequest(response.Errors);
 
             return Ok(response);
+        }
+
+        [HttpPost]
+        [Route("logout")]
+        public async Task<IActionResult> Logout(string userName)
+        {
+            var response = await userService.Revoke(userName);
+
+            return Ok(response);
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPost]
+        [Route("revoke-all")]
+        public async Task<IActionResult> RevokeAll()
+        {
+            await userService.RevokeAll();
+
+            return NoContent();
         }
     }
 }

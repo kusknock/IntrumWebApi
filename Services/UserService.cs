@@ -1,4 +1,6 @@
+using IntrumWebApi.Models;
 using IntrumWebApi.Models.Entities;
+using IntrumWebApi.Models.IdentityModels;
 using IntrumWebApi.Services;
 using IntrumWebApi.Services.Interfaces;
 using ItrumWebApi.Models;
@@ -27,38 +29,72 @@ namespace PaymentApi.Services
             this.jwtManager = jwtManager;
         }
 
-        public async Task<AuthenticateResponse> Authenticate(AuthenticateRequest model)
+        public async Task<IIdentityResponse> Register(RegistrationRequest model)
+        {
+            ApplicationUser user = new()
+            {
+                UserName = model.UserName,
+                SecurityStamp = Guid.NewGuid().ToString()
+            };
+
+            var result = await userManager.CreateAsync(user, model.Password);
+
+            if (!result.Succeeded)
+                return RegularResponse.ErrorResponse(user, result.Errors);
+
+            await roleService.SetRoleByUser(user, UserRoles.User);
+
+            return new RegistrationResponse(user);
+        }
+
+        public async Task<IIdentityResponse> RegisterAdmin(RegistrationRequest model)
+        {
+            ApplicationUser user = new()
+            {
+                UserName = model.UserName,
+                SecurityStamp = Guid.NewGuid().ToString()
+            };
+
+            var result = await userManager.CreateAsync(user, model.Password);
+
+            if (!result.Succeeded)
+                return RegularResponse.ErrorResponse(user, result.Errors);
+
+            await roleService.SetRoleByUser(user, UserRoles.User, UserRoles.Admin);
+
+            return new RegistrationResponse(user);
+        }
+
+        public async Task<IIdentityResponse> Authenticate(AuthenticateRequest model)
         {
             var user = await userManager.FindByNameAsync(model.UserName);
 
-            // проверяем существование пользователя
             if (user == null)
-                return ErrorResponse(model, IdentityTypeErrors.UserNotFound, "User not found");
+                return RegularResponse.ErrorResponse(model, 
+                    nameof(IdentityTypeErrors.UserNotFound), 
+                    IdentityTypeErrors.UserNotFound);
 
             var isPassValid = await userManager.CheckPasswordAsync(user, model.Password);
 
-            // проверяем правильно ли он ввел пароль
             if (!isPassValid)
-                return ErrorResponse(model, IdentityTypeErrors.InvalidUserNameOrPassword, "Invalid UserName or Password");
+                return RegularResponse.ErrorResponse(model, 
+                    nameof(IdentityTypeErrors.InvalidUserNameOrPassword), 
+                    IdentityTypeErrors.InvalidUserNameOrPassword);
 
             var claims = await roleService.GetClaimsByUser(user);
-
-            // генерируем токен записываем его в модель
-            var jwtToken = jwtManager.CreateToken(claims.ToList());
+            var tokens = jwtManager.CreatePairOfTokens(claims);
 
             _ = double.TryParse(configuration["Jwt:RefreshTokenValidityInDays"], out double refreshTokenExpiredInDays);
-
-            // создаем refresh token
-            user.RefreshToken = jwtManager.GenerateRefreshToken();
+            user.RefreshToken = tokens.RefreshToken;
             user.RefreshTokenExpiryTime = DateTime.Now.Add(TimeSpan.FromDays(refreshTokenExpiredInDays));
 
             var resultUpdate = await userManager.UpdateAsync(user);
 
             // проверяем успешность обновления
             if (!resultUpdate.Succeeded)
-                return new AuthenticateResponse(model, resultUpdate.Errors);
+                return RegularResponse.ErrorResponse(model, resultUpdate.Errors);
 
-            return new AuthenticateResponse(user, new JwtSecurityTokenHandler().WriteToken(jwtToken));
+            return new AuthenticateResponse(user, tokens.AccessToken);
         }
 
         public IEnumerable<ApplicationUser> GetAll()
@@ -71,18 +107,32 @@ namespace PaymentApi.Services
             return await userManager.FindByIdAsync(id.ToString());
         }
 
-        private AuthenticateResponse ErrorResponse(AuthenticateRequest model, string code, string description)
+        public async Task<IIdentityResponse> Revoke(string userName)
         {
-            List<IdentityError> errors = new List<IdentityError>
-                {
-                    new IdentityError()
-                    {
-                        Code = code,
-                        Description = description
-                    }
-                };
+            var user = await userManager.FindByNameAsync(userName);
 
-            return new AuthenticateResponse(model, errors);
+            if (user == null)
+                return RegularResponse.ErrorResponse(user, nameof(IdentityTypeErrors.UserNotFound), IdentityTypeErrors.UserNotFound);
+
+            user.RefreshToken = null;
+
+            await userManager.UpdateAsync(user);
+
+            return RegularResponse.SuccessResponse("Success!");
         }
+
+        public async Task RevokeAll()
+        {
+            var users = userManager.Users.ToList();
+
+            foreach (var user in users)
+            {
+                user.RefreshToken = null;
+
+                await userManager.UpdateAsync(user);
+            }
+        }
+
+
     }
 }

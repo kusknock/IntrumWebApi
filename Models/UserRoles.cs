@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
-namespace IntrumWebApi.Models.Entities
+namespace IntrumWebApi.Models
 {
     public enum UserRoles
     {

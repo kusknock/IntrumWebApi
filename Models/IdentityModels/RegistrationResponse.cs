@@ -16,12 +16,5 @@ namespace ItrumWebApi.Models
             Username = user.UserName;
             Errors = null;
         }
-
-        public RegistrationResponse(ApplicationUser user, IEnumerable<IdentityError> errors)
-        {
-            Id = "-1";
-            Username = user.UserName;
-            Errors = errors;
-        }
     }
 }

@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using ItrumWebApi.Models.IdentityModels;
 using System.Collections.Generic;
 using IntrumWebApi.Models.Entities;
+using IntrumWebApi.Models;
 
 namespace ItrumWebApi.Models
 {
@@ -9,24 +10,16 @@ namespace ItrumWebApi.Models
     {
         public string Id { get; set; }
         public string? Username { get; set; }
-        public string? Token { get; set; } = null!;  
+        public TokenModel? TokenModel { get; set; }
 
         public IEnumerable<IdentityError>? Errors { get; private set; } = null!;
 
-        public AuthenticateResponse(ApplicationUser user, string token)
+        public AuthenticateResponse(ApplicationUser user, string? token)
         {
             Id = user.Id;
             Username = user.UserName;
-            Token = token;
+            TokenModel = new (token, user.RefreshToken);
             Errors = null;
-        }
-
-        public AuthenticateResponse(AuthenticateRequest model, IEnumerable<IdentityError> errors)
-        {
-            Id = "-1";
-            Username = model.UserName;
-            Token = null;
-            Errors = errors;
         }
     }
 }
