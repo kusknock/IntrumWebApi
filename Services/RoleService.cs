@@ -1,16 +1,19 @@
 ﻿using IntrumWebApi.Models.Entities;
 using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations;
 using System.IdentityModel.Tokens.Jwt;
+using System.Reflection;
 using System.Security.Claims;
 
 namespace IntrumWebApi.Services.Interfaces
 {
     public class RoleService : IRoleService
     {
-        private readonly RoleManager<IdentityUser> roleManager;
+        private readonly RoleManager<IdentityRole> roleManager;
         private readonly UserManager<ApplicationUser> userManager;
 
-        public RoleService(RoleManager<IdentityUser> roleManager, UserManager<ApplicationUser> userManager)
+        public RoleService(RoleManager<IdentityRole> roleManager, 
+            UserManager<ApplicationUser> userManager)
         {
             this.roleManager = roleManager;
             this.userManager = userManager;
@@ -32,6 +35,22 @@ namespace IntrumWebApi.Services.Interfaces
             }
 
             return authClaims;
+        }
+
+        public async Task SetRoleByUser(ApplicationUser user, params UserRoles[] roles)
+        {
+            foreach(var role in roles)
+            {
+                var displayName = Enum.GetName(role);
+
+                if (displayName == null)
+                    continue;
+
+                if (!await roleManager.RoleExistsAsync(displayName))
+                    await roleManager.CreateAsync(new IdentityRole(displayName));
+
+                await userManager.AddToRoleAsync(user, displayName);
+            }
         }
     }
 }

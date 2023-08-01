@@ -1,8 +1,13 @@
+using IntrumWebApi.Models.Entities;
+using IntrumWebApi.Services;
+using IntrumWebApi.Services.Interfaces;
 using ItrumWebApi.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using PaymentApi.Services;
 using System.Text;
 
 namespace IntrumWebApi
@@ -34,18 +39,19 @@ namespace IntrumWebApi
 
             services.AddCors();
 
-            // подключаем параметры из application.json
-            //services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
-
             services.AddDbContext<ApplicationContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
+            services.AddIdentity<ApplicationUser, IdentityRole>()
+                .AddEntityFrameworkStores<ApplicationContext>();
 
+            services.AddSingleton<IJwtManagerRepository, JwtManagerRepository>();
+
+            services.AddScoped<IRegisterService, RegisterService>();
+            services.AddScoped<IRoleService, RoleService>();
+            services.AddScoped<IUserService, UserService>();
 
             services.AddControllers();
-
-            // DI контейнер с UserService и RegisterService
-            //services.AddScoped<IRegisterService, RegisterService>();
 
             services.AddSwaggerGen(swagger =>
             {

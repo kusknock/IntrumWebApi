@@ -23,7 +23,7 @@ namespace IntrumWebApi.Controllers
 
         [HttpPost("register")]
         [AllowAnonymous]
-        public async Task<IActionResult> Register([FromBody] RegistrationRequest model)
+        public async Task<IActionResult> Register([FromForm] RegistrationRequest model)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -36,9 +36,24 @@ namespace IntrumWebApi.Controllers
             return Ok(response);
         }
 
+        [HttpPost("register-admin")]
+        [AllowAnonymous]
+        public async Task<IActionResult> RegisterAdmin([FromForm] RegistrationRequest model)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var response = await registerService.RegisterAdmin(model);
+
+            if (response.Errors != null)
+                return BadRequest(response.Errors);
+
+            return Ok(response);
+        }
+
         [HttpPost("auth")]
         [AllowAnonymous]
-        public async Task<IActionResult> Auth([FromBody] AuthenticateRequest model)
+        public async Task<IActionResult> Auth([FromForm] AuthenticateRequest model)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);

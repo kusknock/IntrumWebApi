@@ -13,12 +13,12 @@ namespace PaymentApi.Services
     {
         private readonly IConfiguration configuration;
         private readonly UserManager<ApplicationUser> userManager;
-        private readonly RoleService roleService;
+        private readonly IRoleService roleService;
         private readonly IJwtManagerRepository jwtManager;
 
         public UserService(IConfiguration configuration,
             UserManager<ApplicationUser> userManager,
-            RoleService roleService,
+            IRoleService roleService,
             IJwtManagerRepository jwtManager)
         {
             this.configuration = configuration;
