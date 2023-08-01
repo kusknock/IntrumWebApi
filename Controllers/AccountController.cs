@@ -2,11 +2,11 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using IntrumWebApi.Models;
-using IntrumWebApi.Services;
 using System.Threading.Tasks;
 using ItrumWebApi.Models;
 using IntrumWebApi.Filters;
 using System.IdentityModel.Tokens.Jwt;
+using IntrumWebApi.Services.Account.Interfaces;
 
 namespace IntrumWebApi.Controllers
 {

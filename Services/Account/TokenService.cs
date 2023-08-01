@@ -1,7 +1,7 @@
 ﻿using IntrumWebApi.Models;
 using IntrumWebApi.Models.Entities;
 using IntrumWebApi.Models.IdentityModels;
-using IntrumWebApi.Services.Interfaces;
+using IntrumWebApi.Services.Account.Interfaces;
 using ItrumWebApi.Models;
 using ItrumWebApi.Models.IdentityModels;
 using Microsoft.AspNetCore.Identity;
@@ -9,7 +9,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Security.Cryptography;
 using System.Text;
 
 namespace IntrumWebApi.Services.Account

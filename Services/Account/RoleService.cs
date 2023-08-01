@@ -1,5 +1,5 @@
 ﻿using IntrumWebApi.Models;
-using IntrumWebApi.Services.Interfaces;
+using IntrumWebApi.Services.Account.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;

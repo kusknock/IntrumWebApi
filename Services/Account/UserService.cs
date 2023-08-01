@@ -1,6 +1,6 @@
 using IntrumWebApi.Models;
 using IntrumWebApi.Models.IdentityModels;
-using IntrumWebApi.Services.Interfaces;
+using IntrumWebApi.Services.Account.Interfaces;
 using ItrumWebApi.Models;
 using ItrumWebApi.Models.IdentityModels;
 using Microsoft.AspNetCore.Identity;

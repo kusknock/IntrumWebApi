@@ -6,6 +6,6 @@
         public string? Name { get; set; }
         public string? Description { get; set; }
         public int? ImageId { get; set; }
-        public decimal? Price { get; set; } = 0;
+        public double? Price { get; set; } = 0;
     }
 }

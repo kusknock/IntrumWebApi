@@ -1,13 +1,12 @@
 using IntrumWebApi.Models.Entities;
-using IntrumWebApi.Services;
-using IntrumWebApi.Services.Interfaces;
+using IntrumWebApi.Services.Account;
+using IntrumWebApi.Services.Account.Interfaces;
 using ItrumWebApi.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using PaymentApi.Services;
 using System.Text;
 
 namespace IntrumWebApi
