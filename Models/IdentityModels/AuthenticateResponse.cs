@@ -10,15 +10,14 @@ namespace ItrumWebApi.Models
     {
         public string Id { get; set; }
         public string? Username { get; set; }
-        public TokenModel? TokenModel { get; set; }
-
+        public TokenModel Tokens { get; set; }
         public IEnumerable<IdentityError>? Errors { get; private set; } = null!;
 
-        public AuthenticateResponse(ApplicationUser user, string? token)
+        public AuthenticateResponse(IdentityUser user, TokenModel tokens)
         {
             Id = user.Id;
             Username = user.UserName;
-            TokenModel = new (token, user.RefreshToken);
+            Tokens = tokens;
             Errors = null;
         }
     }

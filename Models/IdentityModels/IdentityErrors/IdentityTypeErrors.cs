@@ -9,5 +9,6 @@ namespace ItrumWebApi.Models.IdentityModels
     {
         public static readonly string UserNotFound = "User is not found";
         public static readonly string InvalidUserNameOrPassword = "You entered invalid password or username. Please try again";
+        public static readonly string TokenIsInvalidOrNotFound = "Refresh token is invalid or not found in db";
     }
 }

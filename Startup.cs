@@ -42,11 +42,10 @@ namespace IntrumWebApi
             services.AddDbContext<ApplicationContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddIdentity<ApplicationUser, IdentityRole>()
+            services.AddIdentity<IdentityUser, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationContext>();
 
-            services.AddSingleton<IJwtManagerRepository, JwtManagerRepository>();
-
+            services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IRoleService, RoleService>();
             services.AddScoped<IUserService, UserService>();
 
@@ -95,18 +94,20 @@ namespace IntrumWebApi
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             }).AddJwtBearer(options =>
             {
-                var secret = Encoding.UTF8.GetBytes(Configuration["Jwt:Secret"]);
+                var secret = Encoding.UTF8.GetBytes(Configuration["Jwt:SecretAccess"]);
 
                 options.RequireHttpsMetadata = false;
                 options.SaveToken = true;
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(secret),
-                    ValidateIssuer = false,
-                    ValidateAudience = false,
                     ValidIssuer = Configuration["Jwt:Issuer"],
                     ValidAudience = Configuration["Jwt:Audience"],
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(secret),
+                    ValidateIssuerSigningKey = true,
+                    ClockSkew = TimeSpan.Zero,
+                    ValidateLifetime = true,
                 };
             });
         }
@@ -133,8 +134,6 @@ namespace IntrumWebApi
 
             app.UseAuthentication();
             app.UseAuthorization();
-
-            //app.UseMiddleware<JwtMiddleware>(); // проверка JWT через самописные фильтры авторизации
 
             //app.UseMiddleware<CheckWorkingTimeMiddleware>(); // проверка ip в белом списке
 
