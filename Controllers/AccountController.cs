@@ -53,9 +53,9 @@ namespace IntrumWebApi.Controllers
             return Ok(response);
         }
 
-        [HttpPost("auth")]
+        [HttpPost("login")]
         [AllowAnonymous]
-        public async Task<IActionResult> Auth([FromForm] AuthenticateRequest model)
+        public async Task<IActionResult> Login([FromForm] AuthenticateRequest model)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);

@@ -10,5 +10,7 @@
             AccessToken = accessToken;
             RefreshToken = refreshToken;
         }
+
+        public TokenModel() { }
     }
 }

@@ -1,3 +1,4 @@
+using IntrumWebApi.Middleware;
 using IntrumWebApi.Models.Entities;
 using IntrumWebApi.Services.Account;
 using IntrumWebApi.Services.Account.Interfaces;
@@ -89,6 +90,8 @@ namespace IntrumWebApi
                 });
             });
 
+            services.AddCors();
+
             //Проверка штатными средствами авторизации JwtBearer
             services.AddAuthentication(options =>
             {
@@ -129,15 +132,12 @@ namespace IntrumWebApi
 
             app.UseRouting();
 
-            app.UseCors(x => x
-                .AllowAnyOrigin()
-                .AllowAnyMethod()
-                .AllowAnyHeader());
+            app.UseCors(builder => builder.AllowAnyOrigin());
 
             app.UseAuthentication();
             app.UseAuthorization();
 
-            //app.UseMiddleware<CheckWorkingTimeMiddleware>(); // проверка ip в белом списке
+            app.UseMiddleware<CheckWorkingTimeMiddleware>(); 
 
             app.UseEndpoints(endpoints =>
             {
