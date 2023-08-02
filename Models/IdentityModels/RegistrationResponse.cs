@@ -1,3 +1,4 @@
+using IntrumWebApi.Models;
 using IntrumWebApi.Models.Entities;
 using ItrumWebApi.Models.IdentityModels;
 using Microsoft.AspNetCore.Identity;
@@ -6,14 +7,13 @@ namespace ItrumWebApi.Models
 {
     public class RegistrationResponse : IIdentityResponse
     {
-        public string? Id { get; set; }
-        public string? Username { get; set; }
+        public UserData UserData { get; set; }
         public IEnumerable<IdentityError>? Errors { get; private set; } = null!;
 
         public RegistrationResponse(IdentityUser user)
         {
-            Id = user.Id;
-            Username = user.UserName;
+            UserData = new UserData(user.Id, user.UserName);
+
             Errors = null;
         }
     }
