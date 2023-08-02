@@ -1,6 +1,8 @@
 using IntrumWebApi.Models.Entities;
 using IntrumWebApi.Services.Account;
 using IntrumWebApi.Services.Account.Interfaces;
+using IntrumWebApi.Services.Other;
+using IntrumWebApi.Services.Other.Interfaces;
 using ItrumWebApi.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -47,6 +49,7 @@ namespace IntrumWebApi
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IRoleService, RoleService>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IProductService, ProductService>();
 
             services.AddControllers();
 
