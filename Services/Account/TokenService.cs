@@ -36,7 +36,7 @@ namespace IntrumWebApi.Services.Account
             _ = int.TryParse(configuration["Jwt:RefreshTokenExpiresIn"], out int RefreshTokenExpiresIn);
 
             tokenModel.AccessToken = GenerateJwtToken(claims, configuration["JWT:SecretAccess"], AccessTokenExpiresIn);
-            tokenModel.RefreshToken = GenerateJwtToken(claims, configuration["JWT:SecretRefresh"], RefreshTokenExpiresIn * 24 * 60);
+            tokenModel.RefreshToken = GenerateJwtToken(claims, configuration["JWT:SecretRefresh"], RefreshTokenExpiresIn);
 
             return tokenModel;
         }

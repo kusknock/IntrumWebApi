@@ -73,7 +73,7 @@ namespace IntrumWebApi.Controllers
                 {
                     HttpOnly = true,
                     SameSite = SameSiteMode.Strict,
-                    Expires = DateTimeOffset.Now.AddDays(RefreshTokenExpiresIn * 24 * 60)
+                    Expires = DateTimeOffset.Now.AddMinutes(RefreshTokenExpiresIn)
                 });
 
             return Ok(response);
@@ -117,7 +117,7 @@ namespace IntrumWebApi.Controllers
                     {
                         HttpOnly = true,
                         SameSite = SameSiteMode.Strict,
-                        Expires = DateTimeOffset.Now.AddMinutes(RefreshTokenExpiresIn * 24 * 60)
+                        Expires = DateTimeOffset.Now.AddMinutes(RefreshTokenExpiresIn)
                     });
 
                 return Ok(response);
