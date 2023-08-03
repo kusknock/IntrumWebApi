@@ -131,6 +131,10 @@ namespace IntrumWebApi.Services.Account
             {
                 return RegularResponse.ErrorResponse(refreshToken, nameof(IdentityTypeErrors.TokenIsInvalidOrNotFound), ex.Message);
             }
+            catch (ArgumentNullException ex)
+            {
+                return RegularResponse.ErrorResponse(refreshToken, nameof(IdentityTypeErrors.TokenIsInvalidOrNotFound), ex.Message);
+            }
         }
     }
 }

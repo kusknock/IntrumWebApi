@@ -126,6 +126,10 @@ namespace IntrumWebApi.Controllers
             {
                 return BadRequest(ex.Message);
             }
+            catch (ArgumentNullException ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }

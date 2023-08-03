@@ -4,6 +4,7 @@ using IntrumWebApi.Models.IdentityModels;
 using IntrumWebApi.Services.Account.Interfaces;
 using ItrumWebApi.Models;
 using ItrumWebApi.Models.IdentityModels;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -93,16 +94,21 @@ namespace IntrumWebApi.Services.Account
         {
             var tokenValidationParameters = new TokenValidationParameters
             {
-                ValidateAudience = false,
-                ValidateIssuer = false,
-                ValidateIssuerSigningKey = true,
+                ValidIssuer = configuration["Jwt:Issuer"],
+                ValidAudience = configuration["Jwt:Audience"],
+                ValidateIssuer = true,
+                ValidateAudience = true,
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:SecretRefresh"])),
-                ValidateLifetime = false
+                ValidateIssuerSigningKey = true,
+                ClockSkew = TimeSpan.Zero,
+                ValidateLifetime = true,
             };
 
             var tokenHandler = new JwtSecurityTokenHandler();
 
-            var principal = tokenHandler.ValidateToken(refreshToken, tokenValidationParameters, out SecurityToken securityToken);
+            SecurityToken securityToken;
+
+            var principal = tokenHandler.ValidateToken(refreshToken, tokenValidationParameters, out securityToken);
 
             if (securityToken is not JwtSecurityToken jwtSecurityToken || !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
                 throw new SecurityTokenException("Invalid token");
