@@ -8,13 +8,13 @@ namespace ItrumWebApi.Models
 {
     public class AuthenticateResponse : IIdentityResponse
     {
-        public UserData UserData { get; set; }
+        public UserData User { get; set; }
         public TokenModel Tokens { get; set; }
         public IEnumerable<IdentityError>? Errors { get; private set; } = null!;
 
         public AuthenticateResponse(IdentityUser user, TokenModel tokens)
         {
-            UserData = new UserData(user.Id, user.UserName);
+            User = new UserData(user.Id, user.UserName);
 
             Tokens = new TokenModel(tokens.AccessToken, tokens.RefreshToken);
 

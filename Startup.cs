@@ -39,7 +39,17 @@ namespace IntrumWebApi
         public void ConfigureServices(IServiceCollection services)
         {
 
-            services.AddCors();
+            services.AddCors(options =>
+            {
+                options.AddPolicy("IntrumWebApp",
+                    policy =>
+                    {
+                        policy.WithOrigins("http://localhost:3000")
+                        .AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .AllowCredentials();
+                    });
+            });
 
             services.AddDbContext<ApplicationContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
@@ -90,8 +100,6 @@ namespace IntrumWebApi
                 });
             });
 
-            services.AddCors();
-
             //Проверка штатными средствами авторизации JwtBearer
             services.AddAuthentication(options =>
             {
@@ -132,12 +140,12 @@ namespace IntrumWebApi
 
             app.UseRouting();
 
-            app.UseCors(builder => builder.AllowAnyOrigin());
+            app.UseCors("IntrumWebApp");
 
             app.UseAuthentication();
             app.UseAuthorization();
 
-            app.UseMiddleware<CheckWorkingTimeMiddleware>(); 
+            //app.UseMiddleware<CheckWorkingTimeMiddleware>(); 
 
             app.UseEndpoints(endpoints =>
             {

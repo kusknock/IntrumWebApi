@@ -7,6 +7,7 @@ using ItrumWebApi.Models;
 using IntrumWebApi.Filters;
 using System.IdentityModel.Tokens.Jwt;
 using IntrumWebApi.Services.Account.Interfaces;
+using Microsoft.IdentityModel.Tokens;
 
 namespace IntrumWebApi.Controllers
 {
@@ -25,7 +26,7 @@ namespace IntrumWebApi.Controllers
 
         [HttpPost("register")]
         [AllowAnonymous]
-        public async Task<IActionResult> Register([FromForm] RegistrationRequest model)
+        public async Task<IActionResult> Register(RegistrationRequest model)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -40,7 +41,7 @@ namespace IntrumWebApi.Controllers
 
         [HttpPost("register-admin")]
         [LocalOnly]
-        public async Task<IActionResult> RegisterAdmin([FromForm] RegistrationRequest model)
+        public async Task<IActionResult> RegisterAdmin(RegistrationRequest model)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -55,7 +56,7 @@ namespace IntrumWebApi.Controllers
 
         [HttpPost("login")]
         [AllowAnonymous]
-        public async Task<IActionResult> Login([FromForm] AuthenticateRequest model)
+        public async Task<IActionResult> Login(AuthenticateRequest model)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -98,26 +99,33 @@ namespace IntrumWebApi.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Refresh()
         {
-            Request.Cookies.TryGetValue("X-Refresh-Token", out string? refreshToken);
+            try
+            {
+                Request.Cookies.TryGetValue("X-Refresh-Token", out string? refreshToken);
 
-            Response.Cookies.Delete("X-Refresh-Token");
+                Response.Cookies.Delete("X-Refresh-Token");
 
-            var response = await userService.RefreshTokenAsync(refreshToken ?? string.Empty) as AuthenticateResponse;
+                var response = await userService.RefreshTokenAsync(refreshToken ?? string.Empty) as AuthenticateResponse;
 
-            if (response?.Errors != null)
-                return Unauthorized(response?.Errors);
+                if (response is null || response.Errors != null)
+                    return Unauthorized(response?.Errors);
 
-            _ = int.TryParse(configuration["Jwt:RefreshTokenExpiresIn"], out int RefreshTokenExpiresIn);
+                _ = int.TryParse(configuration["Jwt:RefreshTokenExpiresIn"], out int RefreshTokenExpiresIn);
 
-            Response.Cookies.Append("X-Refresh-Token", response.Tokens.RefreshToken,
-                new CookieOptions()
-                {
-                    HttpOnly = true,
-                    SameSite = SameSiteMode.Strict,
-                    Expires = DateTimeOffset.Now.AddMinutes(RefreshTokenExpiresIn * 24 * 60)
-                });
+                Response.Cookies.Append("X-Refresh-Token", response.Tokens.RefreshToken,
+                    new CookieOptions()
+                    {
+                        HttpOnly = true,
+                        SameSite = SameSiteMode.Strict,
+                        Expires = DateTimeOffset.Now.AddMinutes(RefreshTokenExpiresIn * 24 * 60)
+                    });
 
-            return Ok(response);
+                return Ok(response);
+            }
+            catch (SecurityTokenException ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }

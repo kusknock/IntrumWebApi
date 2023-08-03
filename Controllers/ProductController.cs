@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace IntrumWebApi.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("product")]
     public class ProductController : ControllerBase
