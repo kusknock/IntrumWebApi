@@ -9,6 +9,8 @@ using Microsoft.IdentityModel.Tokens;
 namespace IntrumWebApi.Services.Account
 {
 
+    // TODO: Надо рефакторить, делать из одного сервиса 2 (Registration, Authentication)
+    // Для тех кто будет смотреть тут сервис нарушает Single Responsibility Principle SOLID
     public class UserService : IUserService
     {
         private readonly UserManager<IdentityUser> userManager;
